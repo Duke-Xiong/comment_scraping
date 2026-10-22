@@ -1,0 +1,140 @@
+===========================================================
+  AMAZON REVIEW DOWNLOADER
+  How to use it - takes about 2 minutes to set up
+===========================================================
+
+STEP 1 - Make sure you extracted this folder
+--------------------------------------------
+If you are reading this from inside a ZIP file, it will not work.
+Right-click the ZIP, choose "Extract All...", then open the folder
+it creates and continue from there.
+
+Tip: put the folder somewhere simple, like your Desktop.
+
+
+STEP 2 - Start it
+-----------------
+Windows:      double-click  run.bat
+Mac / Linux:  open Terminal in this folder and type:  ./run.sh
+
+The first time, it spends a few minutes downloading what it needs.
+This happens once. Leave the black window open while it works.
+
+If Windows shows a blue "Windows protected your PC" box:
+  click "More info", then "Run anyway".
+This appears for any file downloaded from the internet.
+
+
+STEP 3 - Use it
+---------------
+Your web browser opens automatically with the app.
+
+  1. Paste the product's ASIN, or just paste the whole Amazon link.
+     (The ASIN is the 10-character code after /dp/ in the address.)
+
+     FOR SEVERAL PRODUCTS AT ONCE: paste them one per line. It will
+     work through them in order and you only sign in once.
+
+  2. Choose the marketplace. If your list mixes countries, or you are
+     not sure, tick "Work out the marketplace for each product
+     automatically".
+  3. Tick which star ratings you want. This applies to every product.
+  4. Click "Start download".
+
+
+STEP 4 - Sign in to Amazon (first time only)
+--------------------------------------------
+The app stops and waits for you here. Nothing is downloaded
+until you are signed in.
+
+A Chrome window opens on Amazon's sign-in page:
+
+  1. Switch to that Chrome window.
+  2. Type your Amazon email and password.
+  3. If Amazon texts or emails you a one-time code (OTP),
+     type that in too.
+  4. Wait until you land on the normal Amazon page.
+
+Then just leave it. The download starts by itself the moment
+you are signed in - you do not need to come back and press
+anything.
+
+Take as long as you need. It waits up to 15 minutes.
+
+Why: Amazon only shows about 9 reviews to visitors who are not
+signed in. Signing in is what makes the full download possible.
+You only do this once - it is remembered next time.
+
+
+STEP 5 - Get your files
+-----------------------
+Watch the progress bar. When it finishes, click the download
+buttons for Excel, CSV or JSON.
+
+If you did several products, you get:
+  - one file per product, and
+  - one combined file with every product together
+    (called "reviews_all_products"), which is easier if you
+    want to compare them in a single sheet.
+
+Your files are also saved in the "output" folder, right here
+next to this file.
+
+If one product in your list fails - a wrong code, or a product
+that does not exist on that marketplace - the rest still finish
+normally. The results screen says which one had a problem and
+why.
+
+
+-----------------------------------------------------------
+IF SOMETHING GOES WRONG
+-----------------------------------------------------------
+
+"Python is not installed"
+    Open the Microsoft Store, search for "Python 3.12", click
+    Get. This does not need admin rights. Then start again.
+
+Setup fails while downloading components
+    Usually the company network blocking it. Try a phone
+    hotspot, or connect to your company VPN, then run again.
+    Nothing is broken - just start it again afterwards.
+
+It only found about 9 reviews
+    You were not signed in to Amazon. Start again and sign in
+    when the Chrome window appears.
+
+"Not found on any major marketplace"
+    Check the ASIN. It is the 10-character code after /dp/ in
+    the product's web address.
+
+A puzzle / "are you a robot" check appears
+    Solve it in the Chrome window. The app waits for you and
+    then continues on its own.
+
+It is asking me to sign in again
+    The "output" folder was moved or deleted. That is where
+    your sign-in is remembered. Just sign in once more.
+
+The black window closed by itself
+    That stops the download. Start it again - it picks up
+    where it left off.
+
+
+-----------------------------------------------------------
+GOOD TO KNOW
+-----------------------------------------------------------
+
+* Everything runs on your own computer. Nothing is uploaded
+  anywhere, and your Amazon password is only ever typed into
+  Amazon's own sign-in page.
+
+* Big downloads take a while - anything from a few minutes to
+  an hour or two. This is deliberate: going slowly is what
+  stops Amazon from blocking you. You can leave it running.
+
+* You can click Stop at any time and keep what it found.
+
+* Amazon limits how many reviews it will show for any one
+  filter. If it cannot get every single review, the app tells
+  you plainly which ones were cut short rather than pretending
+  it got them all.

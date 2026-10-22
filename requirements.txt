@@ -1,0 +1,18 @@
+# --- required -------------------------------------------------------------
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+
+# Web UI
+flask>=3.0.0
+
+# Browser engine. Drives your installed Chrome or Edge, so no separate
+# 188 MB Chromium download is needed in the normal case.
+playwright>=1.40.0
+
+# Excel export
+openpyxl>=3.1.0
+
+# --- optional -------------------------------------------------------------
+# Only needed for the CLI's --cookies-from-browser flag.
+# browser-cookie3>=0.19.1

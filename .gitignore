@@ -1,0 +1,37 @@
+# Virtual environment created by run.bat / run.sh
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Scrape results and the signed-in browser profile.
+# The profile holds your Amazon session - never commit it.
+output/
+*.csv
+*.xlsx
+*.jsonl
+!tests/fixtures/*
+
+# Checkpoints
+.checkpoint_*.json
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# PyInstaller build output. The .exe is shipped as a GitHub Release
+# asset, not committed - binaries do not belong in git history.
+build/
+dist/
+*.spec
+
+# Local test artifacts
+runbat_test.log
+runbat_err.log
+empty_stdin.tmp
+probe_*.html
+cookies_probe.json
