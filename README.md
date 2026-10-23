@@ -1,4 +1,4 @@
-# Amazon Review Downloader
+# comment_scraping
 
 Download **all** the reviews for an Amazon product — not just the first page — and save them as CSV, Excel or JSON. Walmart is supported through a separate page.
 
@@ -87,7 +87,7 @@ This isn't optional: Amazon shows signed-out visitors about 9 reviews and then a
 
 **Finds the right marketplace.** An ASIN only works on the Amazon site it belongs to (`B08H2Y91P1` is on amazon.in and doesn't exist on amazon.com). Click **Find marketplace** and it checks for you.
 
-**Does many products in one go.** Paste a list of ASINs (or product links), one per line, and it works through them in order. You sign in once for the whole batch. You get a file per product *plus* one combined file with everything in it, so you can compare products in a single sheet.
+**Does many products in one go.** Paste a list of ASINs (or product links), one per line, and it works through them in order. You sign in once for the whole batch. You get a file per product _plus_ one combined file with everything in it, so you can compare products in a single sheet.
 
 **Lets you pick which reviews.** All of them, or just 5-star, or just the critical ones — any combination. Applies to every product in the batch.
 
@@ -123,7 +123,7 @@ it does not import or modify the Amazon scraper.
 
 Amazon limits **any single filter to 100 reviews**. Ask for page 11 and you get page 10 again. That's why most scrapers stop at 100 and quietly call it done.
 
-This app works around it by slicing the reviews into groups Amazon filters *before* it applies that limit, then merging the results and removing duplicates:
+This app works around it by slicing the reviews into groups Amazon filters _before_ it applies that limit, then merging the results and removing duplicates:
 
 - **by star rating** — every review has exactly one, so this alone lifts the ceiling to 5 × 100
 - **by sort order** — "most recent" and "most helpful" surface a different 100 from the same group
@@ -134,7 +134,7 @@ On a product with 388 written reviews this returns essentially all of them.
 
 ### An honest limit
 
-On a product with *thousands* of five-star reviews, nobody can get every one — Amazon simply won't serve them. When that happens the app tells you plainly which ratings were cut off, rather than implying you got everything.
+On a product with _thousands_ of five-star reviews, nobody can get every one — Amazon simply won't serve them. When that happens the app tells you plainly which ratings were cut off, rather than implying you got everything.
 
 A related caveat: because rare ratings get captured completely while common ones get truncated, **the average rating calculated from a big download reads lower than the product's real average.** Trust Amazon's own rating figure, not one computed from the file.
 
@@ -156,14 +156,14 @@ The UI covers everything, but there's a CLI too:
 python -m amazon_reviews B08H2Y91P1 --domain amazon.in --engine browser --headful --coverage max
 ```
 
-| Option | |
-|---|---|
-| `--domain` | marketplace, e.g. `amazon.in` |
-| `--coverage` | `fast` / `standard` / `max` |
-| `--engine` | use `browser` — see note below |
-| `--headful` | show the window (needed to sign in) |
-| `--format` | `csv,json,jsonl,xlsx` |
-| `--out` | output folder |
+| Option       |                                     |
+| ------------ | ----------------------------------- |
+| `--domain`   | marketplace, e.g. `amazon.in`       |
+| `--coverage` | `fast` / `standard` / `max`         |
+| `--engine`   | use `browser` — see note below      |
+| `--headful`  | show the window (needed to sign in) |
+| `--format`   | `csv,json,jsonl,xlsx`               |
+| `--out`      | output folder                       |
 
 ### The two engines
 
@@ -181,7 +181,7 @@ python -m amazon_reviews B08H2Y91P1 --domain amazon.in --engine http --cookies-f
 
 ## Troubleshooting
 
-**"Python is not installed"** — install it and tick *Add Python to PATH*, then run again.
+**"Python is not installed"** — install it and tick _Add Python to PATH_, then run again.
 
 **It only found ~9 reviews** — you weren't signed in. Re-run and sign in when Chrome opens.
 
