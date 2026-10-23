@@ -1,0 +1,86 @@
+{
+  "filteredReviewsCount": 21,
+  "reviewsWithTextCount": 21,
+  "totalReviewCount": 273,
+  "averageOverallRating": 4.5,
+  "ratingValueFiveCount": 212,
+  "ratingValueFourCount": 24,
+  "ratingValueThreeCount": 12,
+  "ratingValueTwoCount": 2,
+  "ratingValueOneCount": 23,
+  "reviewsWithTextRatingFiveCount": 12,
+  "reviewsWithTextRatingFourCount": 2,
+  "reviewsWithTextRatingThreeCount": 1,
+  "reviewsWithTextRatingTwoCount": 1,
+  "reviewsWithTextRatingOneCount": 5,
+  "pagination": {
+    "currentSpan": "1-10",
+    "total": 21,
+    "next": {"url": "sort=relevancy&page=2"},
+    "pages": [
+      {"num": 1, "active": true},
+      {"num": 2},
+      {"num": 3}
+    ]
+  },
+  "customerReviews": [
+    {
+      "reviewId": "100000001",
+      "reviewReferenceId": "00000000-0000-0000-0000-000000000001",
+      "rating": 5,
+      "reviewTitle": "Great purchase.",
+      "reviewText": "Works well and arrived quickly.",
+      "reviewSubmissionTime": "10/13/2026",
+      "userNickname": "TestUser",
+      "authorId": "author-hash-1",
+      "userLocation": "Texas",
+      "badges": [
+        {
+          "id": "VerifiedPurchaser",
+          "glassBadge": {"text": "Verified Purchase"}
+        }
+      ],
+      "positiveFeedback": 2,
+      "photos": [
+        {"normalUrl": "https://example.com/review-photo.jpg"}
+      ],
+      "sellerName": "Walmart.com",
+      "externalSource": "bazaarvoice",
+      "itemId": "20951672018",
+      "itemName": "Test Item"
+    },
+    {
+      "reviewId": "100000002",
+      "reviewReferenceId": "00000000-0000-0000-0000-000000000002",
+      "rating": 4,
+      "reviewTitle": null,
+      "reviewText": "Good value for the price.",
+      "reviewSubmissionTime": "9/26/2026",
+      "userNickname": "anonymous",
+      "authorId": "author-hash-2",
+      "userLocation": null,
+      "badges": [],
+      "positiveFeedback": 0,
+      "photos": [],
+      "sellerName": "Walmart.com",
+      "externalSource": "bazaarvoice",
+      "itemId": "20951672018",
+      "itemName": "Test Item"
+    },
+    {
+      "reviewId": "100000003",
+      "reviewReferenceId": "00000000-0000-0000-0000-000000000003",
+      "rating": 1,
+      "reviewTitle": "Rating only",
+      "reviewText": "   ",
+      "reviewSubmissionTime": "9/25/2026",
+      "userNickname": "NoText",
+      "badges": [],
+      "positiveFeedback": 0,
+      "photos": [],
+      "sellerName": "Walmart.com",
+      "externalSource": "bazaarvoice",
+      "itemId": "20951672018"
+    }
+  ]
+}

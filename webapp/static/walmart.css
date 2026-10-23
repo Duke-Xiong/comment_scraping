@@ -1,0 +1,30 @@
+/* Small differences for the Walmart page. Everything else reuses style.css. */
+
+.challenge-card { border-color: var(--accent); border-width: 2px; }
+
+.ratings-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.rating-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  font-size: 13.5px;
+}
+
+.rating-row .stars-label { font-weight: 650; }
+.rating-row .rating-nums { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+#w-site-note { color: var(--muted); background: transparent; border-color: transparent; padding-left: 0; }
+
+#w-fatal { margin-top: 14px; }
+
+.walmart-inline-code { font-family: ui-monospace, Consolas, monospace; }

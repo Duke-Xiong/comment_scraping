@@ -87,6 +87,34 @@ why.
 
 
 -----------------------------------------------------------
+WALMART (separate page)
+-----------------------------------------------------------
+
+The app has two pages. Use the switch in the top-right corner:
+  [ Amazon | Walmart ]
+
+On the Walmart page:
+
+  1. Paste a Walmart item ID (the number in the product link after
+     /ip/) or the whole product link, one per line.
+  2. Tick the star ratings you want.
+  3. Click "Start download".
+
+Walmart always opens a real Chrome window. If it shows
+"Robot or human?", switch to Chrome and PRESS AND HOLD the
+button until the normal page returns. The download continues
+by itself - you do not need to press anything in the app.
+
+Walmart only gives us written reviews; ratings with no text
+are skipped, but their totals and star distribution are still
+shown in the results.
+
+Files are saved in the "output/walmart" folder.
+
+For several Walmart products, paste one per line; they run
+one after another and you also get a combined file.
+
+-----------------------------------------------------------
 IF SOMETHING GOES WRONG
 -----------------------------------------------------------
 

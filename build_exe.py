@@ -60,6 +60,7 @@ def main() -> int:
         "--hidden-import", "openpyxl",
         "--hidden-import", "lxml._elementpath",
         "--collect-submodules", "amazon_reviews",
+        "--collect-submodules", "walmart_reviews",
         "--collect-submodules", "webapp",
 
         # Nothing here needs a GUI toolkit or plotting stack; excluding them

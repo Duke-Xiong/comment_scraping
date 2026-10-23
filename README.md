@@ -2,7 +2,7 @@
 
 Download **all** the reviews for an Amazon product — not just the first page — and save them as CSV, Excel or JSON.
 
-![status](https://img.shields.io/badge/tests-26%20passing-brightgreen) ![python](https://img.shields.io/badge/python-3.10%2B-blue)
+![status](https://img.shields.io/badge/tests-30%20passing-brightgreen) ![python](https://img.shields.io/badge/python-3.10%2B-blue)
 
 ---
 
@@ -55,6 +55,26 @@ This isn't optional: Amazon shows signed-out visitors about 9 reviews and then a
 `review_id`, `title`, `body`, `rating`, `author`, `date`, `country`, `verified_purchase`, `vine_review`, `helpful_votes`, `variant`, `images`, `permalink`
 
 ---
+
+## Walmart (separate page)
+
+The app has two pages and a switch in the top-right corner: **Amazon | Walmart**.
+The Walmart page is independent, with its own job, output folder and Chrome
+profile, so it cannot disturb an Amazon download.
+
+- **Input:** a Walmart item ID (`20951672018`) or a product link, one per line.
+- **Reviews:** only written reviews are exported, with star filtering; ratings
+  without text are filtered out but still summarised (counts and average).
+- **Walmart is US-only:** `walmart.com`.
+- **Visible Chrome is required.** Walmart blocks headless browsers and plain
+  HTTP. If it shows **"Robot or human?"**, press and hold the button in the
+  Chrome window; the download resumes automatically.
+- **Output:** `output/walmart/` — per item plus a combined file when you queue
+  several items. Excel has a `Ratings` sheet with Walmart's own distribution.
+- **CLI:** `python -m walmart_reviews 20951672018 --stars 5,4`.
+
+The Walmart code lives in `walmart_reviews/` and `webapp/walmart_server.py`;
+it does not import or modify the Amazon scraper.
 
 ## How it gets past the first page
 
@@ -133,7 +153,8 @@ python -m amazon_reviews B08H2Y91P1 --domain amazon.in --engine http --cookies-f
 ## For developers
 
 ```bash
-python tests/test_parser.py     # 26 tests, no network needed
+python tests/test_parser.py     # 30 Amazon tests, no network needed
+python tests/test_walmart.py    # 21 Walmart tests, no network needed
 python -m webapp.server         # http://127.0.0.1:5000
 ```
 

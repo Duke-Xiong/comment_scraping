@@ -1,0 +1,48 @@
+/* Two-segment Amazon / Walmart switch, fixed in the top-right corner.
+   Shared by both pages; only additive, so it does not disturb existing rules. */
+
+.site-switch {
+  position: fixed;
+  top: 16px;
+  right: 18px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .06);
+}
+
+.site-switch a {
+  display: inline-block;
+  padding: 6px 13px;
+  border-radius: 999px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.site-switch a:hover,
+.site-switch a:focus-visible {
+  color: var(--text);
+  outline: none;
+}
+
+.site-switch a.active {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+@media (max-width: 520px) {
+  .site-switch {
+    top: 8px;
+    right: 10px;
+    transform: scale(.94);
+    transform-origin: top right;
+  }
+}

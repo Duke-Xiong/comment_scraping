@@ -19,6 +19,9 @@ Two ways in:
 - **Web UI** — `run.bat` (Windows) or `./run.sh`, the intended path for users.
 - **CLI** — `python -m amazon_reviews <ASIN> --domain amazon.in ...`
 
+Walmart is a separate, independent page and package; see `HANDOFF_WALMART.md`.
+It does not import the Amazon scraper.
+
 Two scrape engines:
 - **browser** (Playwright + real Chrome) — the only one that works properly. Use it.
 - **http** (requests) — no browser needed, but **one batch (10 reviews) per
@@ -44,7 +47,7 @@ webapp/
   templates/index.html     single-page UI
   static/app.js, style.css
 tests/
-  test_parser.py           25 tests against real captured markup
+  test_parser.py           30 tests against real captured markup
   fixtures/                real Amazon HTML (2025 layout)
 run.bat / run.sh           one-click launchers (create venv, install, serve)
 output/                    results + .browser-profile (the signed-in session)

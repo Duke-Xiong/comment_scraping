@@ -62,6 +62,16 @@ SIGNIN_TIMEOUT = 900
 
 app = Flask(__name__, static_folder=str(resource_dir() / "static"))
 
+# The Walmart page is a separate blueprint with its own job, output folder and
+# browser profile.  Registering it is the only backend change on the Amazon
+# side; none of the Amazon routes or state are touched.
+try:
+    from webapp.walmart_server import walmart_bp  # noqa: E402
+
+    app.register_blueprint(walmart_bp)
+except Exception as exc:  # keep the Amazon page usable if Walmart is broken
+    print(f"  ! Walmart page unavailable: {type(exc).__name__}: {exc}")
+
 
 # --------------------------------------------------------------------------
 # Job state

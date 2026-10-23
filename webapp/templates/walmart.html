@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Walmart Review Downloader</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/site-switch.css">
+  <link rel="stylesheet" href="/static/walmart.css">
+</head>
+<body>
+<nav class="site-switch" aria-label="Choose site">
+  <a href="/">Amazon</a>
+  <a href="/walmart" class="active" aria-current="page">Walmart</a>
+</nav>
+
+<div class="wrap">
+
+  <header>
+    <h1>Walmart Review Downloader</h1>
+    <p class="sub">Downloads every written review Walmart will show for an item &mdash; not just the first page.</p>
+  </header>
+
+  <!-- ---------------- setup ---------------- -->
+  <section class="card" id="w-setup">
+    <div class="field">
+      <label for="w-items">Products</label>
+      <textarea id="w-items" rows="4" spellcheck="false" autocomplete="off"
+        placeholder="20951672018&#10;123456789&#10;or paste Walmart product links, one per line"></textarea>
+      <div class="row-between">
+        <p class="hint">Walmart item IDs are the number in the product URL after <code>/ip/</code>.</p>
+        <span class="counter" id="w-count">no products yet</span>
+      </div>
+      <p class="note" id="w-site-note">
+        Walmart US only (walmart.com). Reviews with no written text are skipped; ratings are summarised.
+      </p>
+    </div>
+
+    <div class="field">
+      <label>Which reviews?</label>
+      <div class="stars" id="w-stars">
+        <label class="star"><input type="checkbox" value="5" checked><span>5 star</span></label>
+        <label class="star"><input type="checkbox" value="4" checked><span>4 star</span></label>
+        <label class="star"><input type="checkbox" value="3" checked><span>3 star</span></label>
+        <label class="star"><input type="checkbox" value="2" checked><span>2 star</span></label>
+        <label class="star"><input type="checkbox" value="1" checked><span>1 star</span></label>
+      </div>
+      <div class="quick">
+        <button type="button" data-w-pick="all" class="link">All</button>
+        <button type="button" data-w-pick="positive" class="link">Positive (4&ndash;5)</button>
+        <button type="button" data-w-pick="critical" class="link">Critical (1&ndash;3)</button>
+        <button type="button" data-w-pick="none" class="link">Clear</button>
+      </div>
+    </div>
+
+    <details class="field advanced">
+      <summary>Advanced</summary>
+      <div class="adv-body">
+        <label for="w-max-pages">Maximum pages per product</label>
+        <select id="w-max-pages">
+          <option value="10">10 pages &mdash; quick sample</option>
+          <option value="50">50 pages</option>
+          <option value="200" selected>200 pages &mdash; default</option>
+          <option value="500">500 pages &mdash; large products</option>
+        </select>
+        <p class="hint">
+          Walmart shows about 10 reviews per page. If the limit is reached before the
+          end, the result is marked as possibly incomplete.
+        </p>
+      </div>
+    </details>
+
+    <button id="w-start" class="primary">Start download</button>
+    <p class="note warn" id="w-error" hidden></p>
+  </section>
+
+  <!-- ---------------- human check gate ---------------- -->
+  <section class="card signin-card challenge-card" id="w-challenge" hidden>
+    <div class="signin-head">
+      <span class="spinner"></span>
+      <h2>Walmart needs a quick human check</h2>
+    </div>
+
+    <p class="signin-lead">
+      Walmart uses a robot check for repeated automated visits. Nothing is being
+      downloaded until you complete it once.
+    </p>
+
+    <ol class="steps">
+      <li>Switch to the <strong>Chrome window</strong> that just opened.</li>
+      <li>If you see <strong>&ldquo;Robot or human?&rdquo;</strong>, press and hold the button.</li>
+      <li>Wait until the normal page returns.</li>
+      <li>Come back here if you like &mdash; the download continues by itself.</li>
+    </ol>
+
+    <p class="signin-auto">
+      <strong>You do not need to press anything here.</strong> This check is not a
+      login; the program only waits for it to clear.
+    </p>
+
+    <div class="signin-foot">
+      <span class="waiting-for" id="w-challenge-timer">waiting&hellip;</span>
+      <button id="w-challenge-cancel" class="ghost danger">Cancel</button>
+    </div>
+
+    <p class="hint">
+      If it keeps coming back, stop and try again later. Do not refresh the page
+      repeatedly &mdash; that makes the check stricter.
+    </p>
+  </section>
+
+  <!-- ---------------- progress ---------------- -->
+  <section class="card" id="w-progress" hidden>
+    <div class="status-head">
+      <div>
+        <div class="status-stage" id="w-stage">Starting&hellip;</div>
+        <div class="status-msg" id="w-message"></div>
+      </div>
+      <button id="w-stop" class="ghost danger">Stop</button>
+    </div>
+
+    <div class="bar-label"><span>Whole batch</span><span id="w-batch-count"></span></div>
+    <div class="bar"><div class="bar-fill" id="w-bar"></div></div>
+
+    <div class="bar-label sub-bar" id="w-product-label" hidden>
+      <span id="w-product-name"></span><span id="w-product-pct"></span>
+    </div>
+    <div class="bar thin" id="w-product-wrap" hidden>
+      <div class="bar-fill alt" id="w-product-bar"></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span class="num" id="w-s-all">0</span><span class="lbl">reviews total</span></div>
+      <div class="stat"><span class="num" id="w-s-reviews">0</span><span class="lbl">this product</span></div>
+      <div class="stat"><span class="num" id="w-s-total">&mdash;</span><span class="lbl">Walmart reports</span></div>
+      <div class="stat"><span class="num" id="w-s-pct">0%</span><span class="lbl">complete</span></div>
+      <div class="stat"><span class="num" id="w-s-elapsed">0:00</span><span class="lbl">elapsed</span></div>
+      <div class="stat"><span class="num" id="w-s-eta">&mdash;</span><span class="lbl">est. left</span></div>
+    </div>
+
+    <div class="current" id="w-current" hidden>
+      <span class="dot"></span><span id="w-current-label"></span>
+    </div>
+
+    <ul class="queue" id="w-queue"></ul>
+
+    <details class="log-wrap">
+      <summary>Activity log</summary>
+      <pre id="w-log"></pre>
+    </details>
+
+    <p class="note warn" id="w-fatal" hidden></p>
+    <button id="w-reset" class="ghost" hidden>Back to setup</button>
+  </section>
+
+  <!-- ---------------- results ---------------- -->
+  <section class="card" id="w-results" hidden>
+    <h2>Done</h2>
+    <div class="result-summary" id="w-result-summary"></div>
+
+    <h3 class="sub-head">Ratings reported by Walmart</h3>
+    <div id="w-ratings" class="ratings-summary"></div>
+
+    <h3 class="sub-head" id="w-combined-head" hidden>Everything in one file</h3>
+    <div class="downloads" id="w-combined-downloads"></div>
+
+    <p class="note" id="w-fail-advice" hidden></p>
+
+    <h3 class="sub-head">Per product</h3>
+    <table class="results-table"><tbody id="w-results-rows"></tbody></table>
+
+    <p class="note" id="w-cap-note" hidden></p>
+    <button id="w-again" class="ghost">Download more products</button>
+  </section>
+
+  <footer>
+    <p>Runs entirely on your computer. Walmart reviews are saved to the <code>output/walmart</code> folder.</p>
+  </footer>
+</div>
+<script src="/static/walmart.js"></script>
+</body>
+</html>

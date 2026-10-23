@@ -1,0 +1,45 @@
+{
+  "filteredReviewsCount": 21,
+  "reviewsWithTextCount": 21,
+  "totalReviewCount": 273,
+  "averageOverallRating": 4.5,
+  "ratingValueFiveCount": 212,
+  "ratingValueFourCount": 24,
+  "ratingValueThreeCount": 12,
+  "ratingValueTwoCount": 2,
+  "ratingValueOneCount": 23,
+  "reviewsWithTextRatingFiveCount": 12,
+  "reviewsWithTextRatingFourCount": 2,
+  "reviewsWithTextRatingThreeCount": 1,
+  "reviewsWithTextRatingTwoCount": 1,
+  "reviewsWithTextRatingOneCount": 5,
+  "pagination": {
+    "currentSpan": "11-20",
+    "total": 21,
+    "next": null,
+    "pages": [
+      {"num": 1},
+      {"num": 2, "active": true},
+      {"num": 3}
+    ]
+  },
+  "customerReviews": [
+    {
+      "reviewId": "100000011",
+      "reviewReferenceId": "00000000-0000-0000-0000-000000000011",
+      "rating": 3,
+      "reviewTitle": "Average",
+      "reviewText": "It is okay, nothing special.",
+      "reviewSubmissionTime": "8/1/2026",
+      "userNickname": "SecondPageUser",
+      "authorId": "author-hash-11",
+      "badges": [],
+      "positiveFeedback": 1,
+      "photos": [],
+      "sellerName": "Walmart.com",
+      "externalSource": "bazaarvoice",
+      "itemId": "20951672018",
+      "itemName": "Test Item"
+    }
+  ]
+}
