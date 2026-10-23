@@ -17,6 +17,10 @@ STEP 2 - Start it
 Windows:      double-click  run.bat
 Mac / Linux:  open Terminal in this folder and type:  ./run.sh
 
+If you have uv installed (recommended for an exact, reproducible setup),
+use run-uv.bat on Windows or ./run-uv.sh on Mac/Linux instead. It restores
+the versions pinned in uv.lock, including Python 3.13 if needed.
+
 The first time, it spends a few minutes downloading what it needs.
 This happens once. Leave the black window open while it works.
 

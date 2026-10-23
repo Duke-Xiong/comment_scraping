@@ -1,17 +1,15 @@
-# --- required -------------------------------------------------------------
-requests>=2.31.0
-beautifulsoup4>=4.12.0
-lxml>=5.0.0
+# Exact runtime versions. The authoritative lockfile is uv.lock; use:
+#     uv sync --frozen
+# This file is the pip fallback for machines without uv.
+requests==2.34.2
+beautifulsoup4==4.15.0
+lxml==6.1.3
+flask==3.1.3
+playwright==1.64.0
+openpyxl==3.1.5
 
-# Web UI
-flask>=3.0.0
-
-# Browser engine. Drives your installed Chrome or Edge, so no separate
-# 188 MB Chromium download is needed in the normal case.
-playwright>=1.40.0
-
-# Excel export
-openpyxl>=3.1.0
+# Build-only (not installed by the launchers):
+# pyinstaller==6.22.3
 
 # --- optional -------------------------------------------------------------
 # Only needed for the CLI's --cookies-from-browser flag.

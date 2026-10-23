@@ -30,6 +30,47 @@ First launch spends a few minutes installing dependencies automatically. After t
 
 **Either way you need Google Chrome or Microsoft Edge installed** — the app drives the one you already have. On Windows, Edge is there by default.
 
+### Reproducible setup with uv (recommended when sharing)
+
+The repo pins both Python and dependency versions:
+
+- `.python-version` → Python 3.13 (uv installs it if needed)
+- `pyproject.toml` → direct dependency versions
+- `uv.lock` → every transitive dependency, with hashes
+
+Install [uv](https://docs.astral.sh/uv/), then:
+
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows PowerShell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+From the project folder:
+
+```bash
+uv sync --frozen        # restores the exact environment, including Python 3.13
+uv run python -m webapp.server
+```
+
+Or use the included launchers:
+
+- macOS / Linux: `./run-uv.sh`
+- Windows: double-click `run-uv.bat`
+
+**Commit `uv.lock` and `.python-version`** — they are what make other machines reproduce the same environment. Do not delete or regenerate the lock casually.
+
+To build an executable (build dependency, not installed by default):
+
+```bash
+uv sync --extra build
+uv run python build_exe.py
+```
+
+Without uv, the older `run.sh` / `run.bat` + `requirements.txt` route still works.
+
 ### Signing in
 
 The first time you download reviews, a Chrome window opens at Amazon's sign-in page. **Sign in there.** The app continues on its own the moment you're through.
@@ -153,8 +194,8 @@ python -m amazon_reviews B08H2Y91P1 --domain amazon.in --engine http --cookies-f
 ## For developers
 
 ```bash
-python tests/test_parser.py     # 30 Amazon tests, no network needed
-python tests/test_walmart.py    # 21 Walmart tests, no network needed
+uv run python tests/test_parser.py     # 30 Amazon tests, no network needed
+uv run python tests/test_walmart.py    # 21 Walmart tests, no network needed
 python -m webapp.server         # http://127.0.0.1:5000
 ```
 

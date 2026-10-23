@@ -1,0 +1,24 @@
+[project]
+name = "amazon-review-downloader"
+version = "1.1.0"
+description = "Local Amazon and Walmart review downloader with a web UI and CLI"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests==2.34.2",
+    "beautifulsoup4==4.15.0",
+    "lxml==6.1.3",
+    "flask==3.1.3",
+    "playwright==1.64.0",
+    "openpyxl==3.1.5",
+]
+
+[project.optional-dependencies]
+build = [
+    "pyinstaller==6.22.3",
+]
+
+[tool.uv]
+# This is an application, not an installable library: uv manages the
+# environment and dependencies, while the code runs from the project root.
+package = false
