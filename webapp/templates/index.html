@@ -1,198 +1,253 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Amazon Review Downloader</title>
-  <link rel="stylesheet" href="/static/style.css">
-  <link rel="stylesheet" href="/static/site-switch.css">
-</head>
-<body>
-<nav class="site-switch" aria-label="Choose site">
-  <a href="/" class="active" aria-current="page">Amazon</a>
-  <a href="/walmart">Walmart</a>
-</nav>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Amazon Review Downloader</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/static/site-switch.css" />
+  </head>
+  <body>
+    <nav class="site-switch" aria-label="Choose site">
+      <a href="/" class="active" aria-current="page">Amazon</a>
+      <a href="/walmart">Walmart</a>
+    </nav>
 
-<div class="wrap">
+    <div class="wrap">
+      <header>
+        <h1>亚马逊评论下载器</h1>
+        <p class="sub">下载亚马逊上针对某款产品展示的所有评论——而不仅仅是第一页的内容。</p>
+      </header>
 
-  <header>
-    <h1>Amazon Review Downloader</h1>
-    <p class="sub">Downloads every review Amazon will show for a product &mdash; not just the first page.</p>
-  </header>
+      <!-- ---------------- setup ---------------- -->
+      <section class="card" id="setup">
+        <div class="field">
+          <label for="asins">产品</label>
+          <textarea
+            id="asins"
+            rows="4"
+            spellcheck="false"
+            autocomplete="off"
+            placeholder="B08H2Y91P1&#10;B07XYZ1234&#10;or paste product links, one per line"
+          ></textarea>
+          <div class="row-between">
+            <p class="hint">每行一个,可以直接输入 ASIN。</p>
+            <span class="counter" id="asin-count">no products yet</span>
+          </div>
+          <p class="note" id="detect-note" hidden></p>
+        </div>
 
-  <!-- ---------------- setup ---------------- -->
-  <section class="card" id="setup">
-    <div class="field">
-      <label for="asins">Products</label>
-      <textarea id="asins" rows="4" spellcheck="false" autocomplete="off"
-        placeholder="B08H2Y91P1&#10;B07XYZ1234&#10;or paste product links, one per line"></textarea>
-      <div class="row-between">
-        <p class="hint">One per line. Bare ASINs or full Amazon links both work.</p>
-        <span class="counter" id="asin-count">no products yet</span>
-      </div>
-      <p class="note" id="detect-note" hidden></p>
-    </div>
+        <div class="field">
+          <label for="domain">Marketplace</label>
+          <select id="domain">
+            <option value="amazon.com">amazon.com &mdash; United States</option>
+            <option value="amazon.in">amazon.in &mdash; India</option>
+            <option value="amazon.co.uk">amazon.co.uk &mdash; United Kingdom</option>
+            <option value="amazon.de">amazon.de &mdash; Germany</option>
+            <option value="amazon.ca">amazon.ca &mdash; Canada</option>
+            <option value="amazon.com.au">amazon.com.au &mdash; Australia</option>
+            <option value="amazon.fr">amazon.fr &mdash; France</option>
+            <option value="amazon.it">amazon.it &mdash; Italy</option>
+            <option value="amazon.es">amazon.es &mdash; Spain</option>
+            <option value="amazon.co.jp">amazon.co.jp &mdash; Japan</option>
+          </select>
+          <label class="checkline">
+            <input type="checkbox" id="auto-detect" />
+            <span>自动确定每款产品的目标市场</span>
+          </label>
+          <p class="hint">
+            An ASIN only works on the marketplace it belongs to. Tick the box if your list mixes countries, or if you
+            are not sure. It adds a few seconds per product.
+          </p>
+        </div>
 
-    <div class="field">
-      <label for="domain">Marketplace</label>
-      <select id="domain">
-        <option value="amazon.com">amazon.com &mdash; United States</option>
-        <option value="amazon.in">amazon.in &mdash; India</option>
-        <option value="amazon.co.uk">amazon.co.uk &mdash; United Kingdom</option>
-        <option value="amazon.de">amazon.de &mdash; Germany</option>
-        <option value="amazon.ca">amazon.ca &mdash; Canada</option>
-        <option value="amazon.com.au">amazon.com.au &mdash; Australia</option>
-        <option value="amazon.fr">amazon.fr &mdash; France</option>
-        <option value="amazon.it">amazon.it &mdash; Italy</option>
-        <option value="amazon.es">amazon.es &mdash; Spain</option>
-        <option value="amazon.co.jp">amazon.co.jp &mdash; Japan</option>
-      </select>
-      <label class="checkline">
-        <input type="checkbox" id="auto-detect">
-        <span>Work out the marketplace for each product automatically</span>
-      </label>
-      <p class="hint">
-        An ASIN only works on the marketplace it belongs to. Tick the box if your
-        list mixes countries, or if you are not sure. It adds a few seconds per product.
-      </p>
-    </div>
+        <div class="field">
+          <label>Which reviews?</label>
+          <div class="stars" id="stars">
+            <label class="star">
+              <input type="checkbox" value="5" checked />
+              <span>5 star</span>
+            </label>
+            <label class="star">
+              <input type="checkbox" value="4" checked />
+              <span>4 star</span>
+            </label>
+            <label class="star">
+              <input type="checkbox" value="3" checked />
+              <span>3 star</span>
+            </label>
+            <label class="star">
+              <input type="checkbox" value="2" checked />
+              <span>2 star</span>
+            </label>
+            <label class="star">
+              <input type="checkbox" value="1" checked />
+              <span>1 star</span>
+            </label>
+          </div>
+          <div class="quick">
+            <button type="button" data-pick="all" class="link">All</button>
+            <button type="button" data-pick="positive" class="link">Positive (4&ndash;5)</button>
+            <button type="button" data-pick="critical" class="link">Critical (1&ndash;3)</button>
+            <button type="button" data-pick="none" class="link">Clear</button>
+          </div>
+        </div>
 
-    <div class="field">
-      <label>Which reviews?</label>
-      <div class="stars" id="stars">
-        <label class="star"><input type="checkbox" value="5" checked><span>5 star</span></label>
-        <label class="star"><input type="checkbox" value="4" checked><span>4 star</span></label>
-        <label class="star"><input type="checkbox" value="3" checked><span>3 star</span></label>
-        <label class="star"><input type="checkbox" value="2" checked><span>2 star</span></label>
-        <label class="star"><input type="checkbox" value="1" checked><span>1 star</span></label>
-      </div>
-      <div class="quick">
-        <button type="button" data-pick="all" class="link">All</button>
-        <button type="button" data-pick="positive" class="link">Positive (4&ndash;5)</button>
-        <button type="button" data-pick="critical" class="link">Critical (1&ndash;3)</button>
-        <button type="button" data-pick="none" class="link">Clear</button>
-      </div>
-    </div>
+        <details class="field advanced">
+          <summary>Advanced</summary>
+          <div class="adv-body">
+            <label for="coverage">How hard to dig</label>
+            <select id="coverage">
+              <option value="max" selected>Maximum &mdash; as many as possible (slowest)</option>
+              <option value="standard">Standard &mdash; good coverage, faster</option>
+              <option value="fast">Quick sample &mdash; a few hundred at most</option>
+            </select>
+            <p class="hint">
+              Amazon caps every filter at 100 reviews, so this tool crawls many filter combinations and merges them.
+              Maximum also mines by keyword, which is the only way past the cap on products with thousands of reviews.
+            </p>
+          </div>
+        </details>
 
-    <details class="field advanced">
-      <summary>Advanced</summary>
-      <div class="adv-body">
-        <label for="coverage">How hard to dig</label>
-        <select id="coverage">
-          <option value="max" selected>Maximum &mdash; as many as possible (slowest)</option>
-          <option value="standard">Standard &mdash; good coverage, faster</option>
-          <option value="fast">Quick sample &mdash; a few hundred at most</option>
-        </select>
-        <p class="hint">
-          Amazon caps every filter at 100 reviews, so this tool crawls many filter
-          combinations and merges them. Maximum also mines by keyword, which is the
-          only way past the cap on products with thousands of reviews.
+        <button id="start" class="primary">Start download</button>
+        <p class="note warn" id="form-error" hidden></p>
+      </section>
+
+      <!-- ---------------- sign-in gate ---------------- -->
+      <section class="card signin-card" id="signin" hidden>
+        <div class="signin-head">
+          <span class="spinner"></span>
+          <h2>Sign in to Amazon to continue</h2>
+        </div>
+
+        <p class="signin-lead">
+          A Chrome window has opened at Amazon's sign-in page. Nothing is downloaded until you are signed in.
         </p>
-      </div>
-    </details>
 
-    <button id="start" class="primary">Start download</button>
-    <p class="note warn" id="form-error" hidden></p>
-  </section>
+        <ol class="steps">
+          <li>
+            Switch to the
+            <strong>Chrome window</strong>
+            that just opened.
+          </li>
+          <li>
+            Enter your Amazon
+            <strong>email and password</strong>
+            .
+          </li>
+          <li>
+            If Amazon texts or emails you a
+            <strong>one-time code (OTP)</strong>
+            , type it in.
+          </li>
+          <li>Wait until you land on the normal Amazon page.</li>
+        </ol>
 
-  <!-- ---------------- sign-in gate ---------------- -->
-  <section class="card signin-card" id="signin" hidden>
-    <div class="signin-head">
-      <span class="spinner"></span>
-      <h2>Sign in to Amazon to continue</h2>
+        <p class="signin-auto">
+          <strong>You don't need to come back here.</strong>
+          The download starts by itself the moment you are signed in.
+        </p>
+
+        <div class="signin-foot">
+          <span class="waiting-for" id="signin-timer">waiting…</span>
+          <button id="signin-cancel" class="ghost danger">Cancel</button>
+        </div>
+
+        <p class="hint">
+          Why: Amazon shows only about nine reviews to visitors who are not signed in. You only have to do this once
+          &mdash; it is remembered next time.
+        </p>
+      </section>
+
+      <!-- ---------------- progress ---------------- -->
+      <section class="card" id="progress" hidden>
+        <div class="status-head">
+          <div>
+            <div class="status-stage" id="stage">Starting…</div>
+            <div class="status-msg" id="message"></div>
+          </div>
+          <button id="stop" class="ghost danger">Stop</button>
+        </div>
+
+        <div class="bar-label">
+          <span>Whole batch</span>
+          <span id="batch-count"></span>
+        </div>
+        <div class="bar"><div class="bar-fill" id="bar"></div></div>
+
+        <div class="bar-label sub-bar" id="product-bar-label" hidden>
+          <span id="product-name"></span>
+          <span id="product-pct"></span>
+        </div>
+        <div class="bar thin" id="product-bar-wrap" hidden>
+          <div class="bar-fill alt" id="product-bar"></div>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <span class="num" id="s-all">0</span>
+            <span class="lbl">reviews total</span>
+          </div>
+          <div class="stat">
+            <span class="num" id="s-reviews">0</span>
+            <span class="lbl">this product</span>
+          </div>
+          <div class="stat">
+            <span class="num" id="s-total">&mdash;</span>
+            <span class="lbl">Amazon reports</span>
+          </div>
+          <div class="stat">
+            <span class="num" id="s-pct">0%</span>
+            <span class="lbl">complete</span>
+          </div>
+          <div class="stat">
+            <span class="num" id="s-elapsed">0:00</span>
+            <span class="lbl">elapsed</span>
+          </div>
+          <div class="stat">
+            <span class="num" id="s-eta">&mdash;</span>
+            <span class="lbl">est. left</span>
+          </div>
+        </div>
+
+        <div class="current" id="current" hidden>
+          <span class="dot"></span>
+          <span id="current-label"></span>
+        </div>
+
+        <ul class="queue" id="queue"></ul>
+
+        <details class="log-wrap">
+          <summary>Activity log</summary>
+          <pre id="log"></pre>
+        </details>
+      </section>
+
+      <!-- ---------------- results ---------------- -->
+      <section class="card" id="results" hidden>
+        <h2>Done</h2>
+        <div class="result-summary" id="result-summary"></div>
+
+        <h3 class="sub-head" id="combined-head" hidden>Everything in one file</h3>
+        <div class="downloads" id="combined-downloads"></div>
+
+        <p class="note" id="fail-advice" hidden></p>
+
+        <h3 class="sub-head">Per product</h3>
+        <table class="results-table"><tbody id="results-rows"></tbody></table>
+
+        <p class="note" id="cap-note" hidden></p>
+        <button id="again" class="ghost">Download more products</button>
+      </section>
+
+      <footer>
+        <p>
+          Runs entirely on your computer. Reviews are saved to the
+          <code>output</code>
+          folder next to this app.
+        </p>
+      </footer>
     </div>
-
-    <p class="signin-lead">
-      A Chrome window has opened at Amazon's sign-in page. Nothing is downloaded
-      until you are signed in.
-    </p>
-
-    <ol class="steps">
-      <li>Switch to the <strong>Chrome window</strong> that just opened.</li>
-      <li>Enter your Amazon <strong>email and password</strong>.</li>
-      <li>If Amazon texts or emails you a <strong>one-time code (OTP)</strong>,
-          type it in.</li>
-      <li>Wait until you land on the normal Amazon page.</li>
-    </ol>
-
-    <p class="signin-auto">
-      <strong>You don't need to come back here.</strong> The download starts by
-      itself the moment you are signed in.
-    </p>
-
-    <div class="signin-foot">
-      <span class="waiting-for" id="signin-timer">waiting…</span>
-      <button id="signin-cancel" class="ghost danger">Cancel</button>
-    </div>
-
-    <p class="hint">
-      Why: Amazon shows only about nine reviews to visitors who are not signed
-      in. You only have to do this once &mdash; it is remembered next time.
-    </p>
-  </section>
-
-  <!-- ---------------- progress ---------------- -->
-  <section class="card" id="progress" hidden>
-    <div class="status-head">
-      <div>
-        <div class="status-stage" id="stage">Starting…</div>
-        <div class="status-msg" id="message"></div>
-      </div>
-      <button id="stop" class="ghost danger">Stop</button>
-    </div>
-
-    <div class="bar-label"><span>Whole batch</span><span id="batch-count"></span></div>
-    <div class="bar"><div class="bar-fill" id="bar"></div></div>
-
-    <div class="bar-label sub-bar" id="product-bar-label" hidden>
-      <span id="product-name"></span><span id="product-pct"></span>
-    </div>
-    <div class="bar thin" id="product-bar-wrap" hidden>
-      <div class="bar-fill alt" id="product-bar"></div>
-    </div>
-
-    <div class="stats">
-      <div class="stat"><span class="num" id="s-all">0</span><span class="lbl">reviews total</span></div>
-      <div class="stat"><span class="num" id="s-reviews">0</span><span class="lbl">this product</span></div>
-      <div class="stat"><span class="num" id="s-total">&mdash;</span><span class="lbl">Amazon reports</span></div>
-      <div class="stat"><span class="num" id="s-pct">0%</span><span class="lbl">complete</span></div>
-      <div class="stat"><span class="num" id="s-elapsed">0:00</span><span class="lbl">elapsed</span></div>
-      <div class="stat"><span class="num" id="s-eta">&mdash;</span><span class="lbl">est. left</span></div>
-    </div>
-
-    <div class="current" id="current" hidden>
-      <span class="dot"></span><span id="current-label"></span>
-    </div>
-
-    <ul class="queue" id="queue"></ul>
-
-    <details class="log-wrap">
-      <summary>Activity log</summary>
-      <pre id="log"></pre>
-    </details>
-  </section>
-
-  <!-- ---------------- results ---------------- -->
-  <section class="card" id="results" hidden>
-    <h2>Done</h2>
-    <div class="result-summary" id="result-summary"></div>
-
-    <h3 class="sub-head" id="combined-head" hidden>Everything in one file</h3>
-    <div class="downloads" id="combined-downloads"></div>
-
-    <p class="note" id="fail-advice" hidden></p>
-
-    <h3 class="sub-head">Per product</h3>
-    <table class="results-table"><tbody id="results-rows"></tbody></table>
-
-    <p class="note" id="cap-note" hidden></p>
-    <button id="again" class="ghost">Download more products</button>
-  </section>
-
-  <footer>
-    <p>Runs entirely on your computer. Reviews are saved to the <code>output</code> folder next to this app.</p>
-  </footer>
-</div>
-<script src="/static/app.js"></script>
-</body>
+    <script src="/static/app.js"></script>
+  </body>
 </html>
