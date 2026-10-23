@@ -1,5 +1,8 @@
 # comment_scraping
 
+This is a tool that can scrape product reviews from Amazon and Walmart.
+这是一个可以爬取亚马逊和沃尔玛产品评论的工具
+
 Download **all** the reviews for an Amazon product — not just the first page — and save them as CSV, Excel or JSON. Walmart is supported through a separate page.
 
 > **Quick start:** see [START.md](START.md) for the uv-based, reproducible setup.
