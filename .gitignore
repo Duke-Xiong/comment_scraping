@@ -35,3 +35,7 @@ runbat_err.log
 empty_stdin.tmp
 probe_*.html
 cookies_probe.json
+
+# Local configuration (contains the upload token)
+.env
+.env.local

@@ -17,7 +17,13 @@ from pathlib import Path
 
 from flask import Blueprint, Response, jsonify, request, send_from_directory
 
-from walmart_reviews.models import WalmartBlockedError, WalmartParseError, extract_item_ids
+from walmart_reviews.models import (
+    WalmartBlockedError,
+    WalmartParseError,
+    extract_item_ids,
+    parse_item_id,
+)
+from webapp.upload_client import UploadError, upload_export
 from walmart_reviews.scraper import DEFAULT_MAX_PAGES, WalmartScraper
 from walmart_reviews.store import WalmartStore, export_combined
 
@@ -390,3 +396,33 @@ def walmart_events():
 @walmart_bp.get("/walmart/api/download/<path:name>")
 def walmart_download(name: str):
     return send_from_directory(OUTPUT_DIR, name, as_attachment=True)
+
+
+def _walmart_export_path(stem: Path) -> Path:
+    for suffix in (".json", ".csv"):
+        candidate = stem.with_suffix(suffix)
+        if candidate.exists():
+            return candidate
+    return stem.with_suffix(".json")
+
+
+@walmart_bp.post("/walmart/api/upload")
+def walmart_upload():
+    data = request.get_json(force=True, silent=True) or {}
+    combined = bool(data.get("combined"))
+
+    if combined:
+        item_id = "all_products"
+        path = _walmart_export_path(OUTPUT_DIR / "walmart_reviews_all_products")
+    else:
+        item_id = parse_item_id(str(data.get("item_id") or data.get("asin") or ""))
+        if not item_id:
+            return jsonify({"ok": False, "error": "A valid Walmart item ID is required."}), 400
+        path = _walmart_export_path(OUTPUT_DIR / f"walmart_reviews_{item_id}")
+
+    try:
+        result = upload_export(path, source="walmart", asin=item_id)
+    except UploadError as exc:
+        return jsonify({"ok": False, "error": str(exc), "upstream": exc.upstream}), exc.status
+
+    return jsonify(result)

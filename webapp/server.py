@@ -21,6 +21,9 @@ from pathlib import Path
 
 from flask import Flask, Response, jsonify, request, send_from_directory
 
+from webapp.env import load_env
+from webapp.upload_client import UploadError, upload_export
+
 from amazon_reviews.browser_scraper import BrowserScraper
 from amazon_reviews.cli import find_marketplace
 from amazon_reviews.models import BlockedError
@@ -539,8 +542,49 @@ def download(name: str):
     return send_from_directory(OUTPUT_DIR, name, as_attachment=True)
 
 
+def _export_path(stem: Path) -> Path:
+    """Prefer JSON (it carries the summary), fall back to CSV."""
+    for suffix in (".json", ".csv"):
+        candidate = stem.with_suffix(suffix)
+        if candidate.exists():
+            return candidate
+    return stem.with_suffix(".json")
+
+
+@app.post("/api/upload")
+def upload():
+    """Send one Amazon export to the configured Java API.
+
+    The browser calls this local route, not the Java service, so the token is
+    never exposed to the page and CORS is avoided.
+    """
+    data = request.get_json(force=True, silent=True) or {}
+    combined = bool(data.get("combined"))
+
+    if combined:
+        asin = "all_products"
+        domain = ""
+        path = _export_path(OUTPUT_DIR / "reviews_all_products")
+    else:
+        asin = (data.get("asin") or "").strip().upper()
+        if not ASIN_RE.fullmatch(asin):
+            return jsonify({"ok": False, "error": "A valid ASIN is required."}), 400
+        domain = (data.get("domain") or "").strip()
+        path = _export_path(OUTPUT_DIR / f"reviews_{asin}")
+
+    try:
+        result = upload_export(path, source="amazon", asin=asin, domain=domain)
+    except UploadError as exc:
+        return jsonify({"ok": False, "error": str(exc), "upstream": exc.upstream}), exc.status
+
+    return jsonify(result)
+
+
 def main(port: int | None = None, open_browser: bool = True) -> int:
     from amazon_reviews import preflight
+
+    # Configuration lives in .env next to the project / executable.
+    load_env()
 
     print()
     if not preflight.report(preflight.run_all(OUTPUT_DIR)):

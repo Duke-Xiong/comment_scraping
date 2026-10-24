@@ -122,6 +122,8 @@ profile, so it cannot disturb an Amazon download.
 The Walmart code lives in `walmart_reviews/` and `webapp/walmart_server.py`;
 it does not import or modify the Amazon scraper.
 
+**Uploading to a database:** copy `.env.example` to `.env`, fill in `REVIEW_UPLOAD_URL` / `REVIEW_UPLOAD_TOKEN`; an **Upload** button appears next to each download button. See [UPLOAD.md](UPLOAD.md).
+
 ## How it gets past the first page
 
 Amazon limits **any single filter to 100 reviews**. Ask for page 11 and you get page 10 again. That's why most scrapers stop at 100 and quietly call it done.
@@ -201,6 +203,7 @@ python -m amazon_reviews B08H2Y91P1 --domain amazon.in --engine http --cookies-f
 ```bash
 uv run python tests/test_parser.py     # 30 Amazon tests, no network needed
 uv run python tests/test_walmart.py    # 21 Walmart tests, no network needed
+python tests/test_upload.py     # 9 upload tests, no network needed
 python -m webapp.server         # http://127.0.0.1:5000
 ```
 

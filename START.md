@@ -180,6 +180,55 @@ ssh -L 8000:127.0.0.1:5000 你的用户名@Mac的局域网IP
 
 ---
 
+## 5.1 上传到数据库（可选）
+
+如果 Java 后端已经提供上传接口：
+
+```bash
+cp .env.example .env
+```
+
+编辑 `.env`：
+
+```dotenv
+# 必填：Java 批量上传接口完整 URL
+REVIEW_UPLOAD_URL=http://127.0.0.1:8080/api/reviews/batch
+
+# 可选：接口 token；无认证时留空
+REVIEW_UPLOAD_TOKEN=replace-with-token
+
+# 可选：认证 header，默认 Authorization
+REVIEW_UPLOAD_AUTH_HEADER=Authorization
+
+# 可选：token 前缀，默认 "Bearer "（末尾空格要保留）
+REVIEW_UPLOAD_AUTH_PREFIX="Bearer "
+
+# 可选：请求超时（秒），默认 30
+REVIEW_UPLOAD_TIMEOUT=30
+
+# 可选：每批条数，默认 500
+REVIEW_UPLOAD_BATCH_SIZE=500
+
+# 可选：5xx/超时重试次数，默认 2
+REVIEW_UPLOAD_RETRIES=2
+```
+
+Windows：
+
+```bat
+copy .env.example .env
+```
+
+然后正常启动。结果页每个产品旁边会出现 **Upload**，合并文件旁边有 **Upload combined**。
+
+- `.env` 由应用自动读取，不需要 `export`；
+- 系统环境变量优先于 `.env`；
+- `.env` 含 token，不要提交到 git；
+- 默认每 500 条一批，可用 `REVIEW_UPLOAD_BATCH_SIZE` 调整；
+- 详细请求格式和 Java 侧要求见 [UPLOAD.md](UPLOAD.md)。
+
+---
+
 ## 6. 更新与版本锁定
 
 依赖已经锁定在 `uv.lock`，不要随意删除。更新依赖时：

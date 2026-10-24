@@ -325,8 +325,65 @@ function dlLinks(files) {
     .join(' ');
 }
 
+/* Upload sits beside the download links.  The browser calls this local Flask
+   route, which forwards to the Java API; the token stays server-side. */
+function uploadBtn(asin, domain, combined = false) {
+  const label = combined ? 'Upload combined' : 'Upload';
+  return `<button class="upload-btn" type="button"
+    data-upload-asin="${asin || ''}"
+    data-upload-domain="${domain || ''}"
+    data-upload-combined="${combined ? '1' : '0'}">${label}</button>`;
+}
+
+function showUploadNote(message, ok) {
+  const el = $('upload-note');
+  if (!el) return;
+  el.hidden = false;
+  el.textContent = message;
+  el.classList.toggle('ok', !!ok);
+  el.classList.toggle('warn', !ok);
+}
+
+document.addEventListener('click', async (event) => {
+  const btn = event.target.closest('.upload-btn');
+  if (!btn) return;
+  const original = btn.textContent;
+  const asin = btn.dataset.uploadAsin || '';
+  const domain = btn.dataset.uploadDomain || '';
+  const combined = btn.dataset.uploadCombined === '1';
+
+  btn.disabled = true;
+  btn.classList.remove('done', 'failed');
+  btn.textContent = 'Uploading...';
+  showUploadNote('Uploading to the database...', true);
+
+  try {
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ asin, domain, combined }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.ok) {
+      throw new Error(data.error || `Upload failed (HTTP ${response.status})`);
+    }
+    btn.textContent = 'Uploaded';
+    btn.classList.add('done');
+    showUploadNote(
+      `Uploaded ${Number(data.uploaded || 0).toLocaleString()} reviews in ${data.batches} batch(es).`,
+      true,
+    );
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = original;
+    btn.classList.add('failed');
+    showUploadNote(err.message || 'Upload failed.', false);
+  }
+});
+
 function finish(d) {
   $('current').hidden = true;
+  $('upload-note').hidden = true;
   $('bar').style.width = '100%';
   $('product-bar').style.width = '100%';
   $('s-eta').textContent = '—';
@@ -395,7 +452,9 @@ function finish(d) {
   // Combined file only exists when more than one product returned rows.
   const hasCombined = (d.files || []).length > 0;
   $('combined-head').hidden = !hasCombined;
-  $('combined-downloads').innerHTML = hasCombined ? dlLinks(d.files) : '';
+  $('combined-downloads').innerHTML = hasCombined
+    ? dlLinks(d.files) + uploadBtn('', '', true)
+    : '';
 
   $('results-rows').innerHTML = rows
     .map((r) => {
@@ -407,10 +466,11 @@ function finish(d) {
       const cov = r.summary && r.summary.coverage_pct
         ? `<span class="muted">${r.summary.coverage_pct}% of Amazon’s total</span>`
         : '';
+      const canUpload = r.ok && (r.files || []).length > 0;
       return `<tr>
           <td class="mono">${r.asin}</td>
           <td>${status} ${cov}</td>
-          <td class="right">${dlLinks(r.files)}</td>
+          <td class="right">${dlLinks(r.files)}${canUpload ? uploadBtn(r.asin, r.domain, false) : ''}</td>
         </tr>`;
     })
     .join('');

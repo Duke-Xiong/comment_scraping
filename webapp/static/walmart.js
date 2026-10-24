@@ -335,6 +335,58 @@ function dlLinks(files) {
     .join(' ');
 }
 
+function uploadBtn(itemId, combined = false) {
+  const label = combined ? 'Upload combined' : 'Upload';
+  return `<button class="upload-btn" type="button"
+    data-w-upload-item="${esc(itemId || '')}"
+    data-w-upload-combined="${combined ? '1' : '0'}">${label}</button>`;
+}
+
+function showUploadNote(message, ok) {
+  const el = $('w-upload-note');
+  if (!el) return;
+  el.hidden = false;
+  el.textContent = message;
+  el.classList.toggle('ok', !!ok);
+  el.classList.toggle('warn', !ok);
+}
+
+document.addEventListener('click', async (event) => {
+  const btn = event.target.closest('.upload-btn');
+  if (!btn) return;
+  const original = btn.textContent;
+  const itemId = btn.dataset.wUploadItem || '';
+  const combined = btn.dataset.wUploadCombined === '1';
+
+  btn.disabled = true;
+  btn.classList.remove('done', 'failed');
+  btn.textContent = 'Uploading...';
+  showUploadNote('Uploading to the database...', true);
+
+  try {
+    const response = await fetch('/walmart/api/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ item_id: itemId, combined }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.ok) {
+      throw new Error(data.error || `Upload failed (HTTP ${response.status})`);
+    }
+    btn.textContent = 'Uploaded';
+    btn.classList.add('done');
+    showUploadNote(
+      `Uploaded ${Number(data.uploaded || 0).toLocaleString()} written reviews in ${data.batches} batch(es).`,
+      true,
+    );
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = original;
+    btn.classList.add('failed');
+    showUploadNote(err.message || 'Upload failed.', false);
+  }
+});
+
 function aggregateRatings(rows) {
   const ratings = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
   const reviews = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
@@ -364,6 +416,7 @@ function renderRatings(rows) {
 
 function finish(d) {
   hideChallenge();
+  $('w-upload-note').hidden = true;
   $('w-current').hidden = true;
   $('w-bar').style.width = '100%';
   $('w-product-bar').style.width = '100%';
@@ -413,7 +466,9 @@ function finish(d) {
 
   const hasCombined = (d.files || []).length > 0;
   $('w-combined-head').hidden = !hasCombined;
-  $('w-combined-downloads').innerHTML = hasCombined ? dlLinks(d.files) : '';
+  $('w-combined-downloads').innerHTML = hasCombined
+    ? dlLinks(d.files) + uploadBtn('', true)
+    : '';
 
   $('w-results-rows').innerHTML = rows
     .map((r) => {
@@ -425,10 +480,11 @@ function finish(d) {
         ? `<span class="muted">${s.coverage_pct}% of Walmart's written reviews</span>` : '';
       const ratings = s.ratings_reported_by_walmart
         ? `<span class="muted">${s.ratings_reported_by_walmart.toLocaleString()} ratings total</span>` : '';
+      const canUpload = r.ok && (r.files || []).length > 0;
       return `<tr>
           <td class="mono">${esc(r.item_id || '')}</td>
           <td>${status} ${cov} ${ratings}</td>
-          <td class="right">${dlLinks(r.files)}</td>
+          <td class="right">${dlLinks(r.files)}${canUpload ? uploadBtn(r.item_id, false) : ''}</td>
         </tr>`;
     })
     .join('');
