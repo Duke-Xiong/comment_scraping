@@ -23,7 +23,6 @@ Batching is done by sending the reviews in chunks inside that object.
 
 from __future__ import annotations
 
-import csv
 import hashlib
 import json
 import os
@@ -62,10 +61,10 @@ def _env_float(name: str, default: float) -> float:
 
 
 def load_export(path: Path) -> tuple[list[dict], dict]:
-    """Read a JSON export (preferred) or CSV fallback.
+    """Read a JSON export.
 
-    JSON carries the summary (ratings total, average, distribution); CSV is
-    accepted so an upload still works if only that format was exported.
+    The application always writes JSON alongside CSV/XLSX; JSON is the only
+    format the upload path supports because it keeps the field types stable.
     """
     path = Path(path)
     if not path.exists():
@@ -85,7 +84,7 @@ def load_export(path: Path) -> tuple[list[dict], dict]:
             raise UploadError(f"Unexpected JSON shape in {path.name}", status=500)
         return _normalise_rows(rows), summary
 
-    raise UploadError("Upload supports .json or .csv exports.", status=400)
+    raise UploadError("Upload supports .json exports only.", status=400)
 
 
 def _normalise_rows(rows: list) -> list[dict]:

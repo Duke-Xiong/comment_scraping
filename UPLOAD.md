@@ -122,6 +122,7 @@ Java 端的 DTO 是 `ReviewImportReq`，所以每个批次发送一个对象，�
 - 顶层是对象，不是数组；数组放在 `reviews` 字段；
 - Walmart 的 `asin` 就是 item ID；`source` 来自页面的 `externalSource`；
 - Amazon 的字段结构相同，`source` / `seller` 缺省时由上传模块补为空字符串；
+- 只上传 JSON 导出（CSV/XLSX 只用于下载）；
 - 每批默认 500 条，可用 `REVIEW_UPLOAD_BATCH_SIZE` 调整；
 - 每个批次带以下请求头，Java 可以忽略：
   - `Authorization: Bearer <token>`
@@ -159,7 +160,7 @@ webapp/upload_client.py :: build_payload()
 
 1. 按钮变灰，显示 `Uploading...`；
 2. 成功后显示 `Uploaded`，并提示上传条数/批次数；
-3. 失败后按钮恢复可点，并显示 Java 返回的错误摘要；
+3. 失败后按钮变为 `Retry upload` / `Retry combined`，恢复可点，并显示 Java 返回的错误摘要；
 4. 上传不删除本地文件，下载按钮仍可用。
 
 ---
@@ -168,7 +169,7 @@ webapp/upload_client.py :: build_payload()
 
 - `REVIEW_UPLOAD_TOKEN` 只存在本机 `.env` / 进程环境变量中，不写日志、不下发浏览器；
 - Java URL 由服务端配置，用户不能通过页面改；
-- 上传只允许 `output/` 下由应用生成的 JSON/CSV；
+- 上传只允许 `output/` 下由应用生成的 JSON；
 - 不要把 token 写进 `app.js` / `walmart.js`；
 - 生产环境建议 Java 侧启用 HTTPS、认证、限流和审计。
 
@@ -178,7 +179,7 @@ webapp/upload_client.py :: build_payload()
 
 ```text
 webapp/
-  upload_client.py   # 读取 JSON/CSV、分批、鉴权、幂等键、requests.post 重试
+  upload_client.py   # 读取 JSON、分批、鉴权、幂等键、requests.post 重试
   server.py          # Amazon POST /api/upload
   walmart_server.py  # Walmart POST /walmart/api/upload
   env.py             # 自动读取 .env
@@ -195,7 +196,7 @@ uv run python tests/test_upload.py
 
 覆盖：
 
-- JSON/CSV 读取；
+- JSON 读取；
 - `.env` 读取与优先级；
 - `ReviewImportReq` 对象（`reviews` 字段）；
 - 分批；

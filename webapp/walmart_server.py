@@ -399,10 +399,7 @@ def walmart_download(name: str):
 
 
 def _walmart_export_path(stem: Path) -> Path:
-    for suffix in (".json", ".csv"):
-        candidate = stem.with_suffix(suffix)
-        if candidate.exists():
-            return candidate
+    """Uploads use the JSON export (stable field types, includes summary)."""
     return stem.with_suffix(".json")
 
 

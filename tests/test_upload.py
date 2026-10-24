@@ -5,7 +5,6 @@ No network is used: ``requests.post`` is replaced with a recorder.
 
 from __future__ import annotations
 
-import csv
 import json
 import os
 import sys
@@ -41,21 +40,6 @@ def test_load_json_export():
         assert summary["reviews_downloaded"] == 2
         assert rows[0]["seller"] == ""
         assert rows[0]["source"] == ""
-
-
-def test_load_csv_fallback():
-    with tempfile.TemporaryDirectory() as tmp:
-        path = Path(tmp) / "reviews_TEST.csv"
-        with path.open("w", newline="", encoding="utf-8-sig") as fh:
-            writer = csv.DictWriter(fh, fieldnames=["review_id", "body"])
-            writer.writeheader()
-            writer.writerow({"review_id": "R1", "body": "hello"})
-        rows, summary = load_export(path)
-        assert rows[0]["review_id"] == "R1"
-        assert rows[0]["body"] == "hello"
-        assert rows[0]["seller"] == ""
-        assert rows[0]["source"] == ""
-        assert summary == {}
 
 
 def test_payload_is_review_import_req():

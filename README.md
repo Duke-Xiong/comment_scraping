@@ -203,7 +203,7 @@ python -m amazon_reviews B08H2Y91P1 --domain amazon.in --engine http --cookies-f
 ```bash
 uv run python tests/test_parser.py     # 30 Amazon tests, no network needed
 uv run python tests/test_walmart.py    # 21 Walmart tests, no network needed
-python tests/test_upload.py     # 9 upload tests, no network needed
+python tests/test_upload.py     # 8 upload tests, no network needed
 python -m webapp.server         # http://127.0.0.1:5000
 ```
 

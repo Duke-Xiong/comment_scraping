@@ -354,16 +354,16 @@ function showUploadNote(message, ok) {
 document.addEventListener('click', async (event) => {
   const btn = event.target.closest('.upload-btn');
   if (!btn) return;
-  const original = btn.textContent;
   const itemId = btn.dataset.wUploadItem || '';
   const combined = btn.dataset.wUploadCombined === '1';
 
   btn.disabled = true;
   btn.classList.remove('done', 'failed');
   btn.textContent = 'Uploading...';
-  showUploadNote('Uploading to the database...', true);
+  let uploaded = false;
 
   try {
+    showUploadNote('Uploading to the database...', true);
     const response = await fetch('/walmart/api/upload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -373,6 +373,7 @@ document.addEventListener('click', async (event) => {
     if (!response.ok || !data.ok) {
       throw new Error(data.error || `Upload failed (HTTP ${response.status})`);
     }
+    uploaded = true;
     btn.textContent = 'Uploaded';
     btn.classList.add('done');
     showUploadNote(
@@ -380,10 +381,14 @@ document.addEventListener('click', async (event) => {
       true,
     );
   } catch (err) {
-    btn.disabled = false;
-    btn.textContent = original;
-    btn.classList.add('failed');
     showUploadNote(err.message || 'Upload failed.', false);
+  } finally {
+    if (!uploaded) {
+      // A failed upload must be retryable without reloading the results page.
+      btn.disabled = false;
+      btn.textContent = combined ? 'Retry combined' : 'Retry upload';
+      btn.classList.add('failed');
+    }
   }
 });
 

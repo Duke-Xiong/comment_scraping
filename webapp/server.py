@@ -543,11 +543,7 @@ def download(name: str):
 
 
 def _export_path(stem: Path) -> Path:
-    """Prefer JSON (it carries the summary), fall back to CSV."""
-    for suffix in (".json", ".csv"):
-        candidate = stem.with_suffix(suffix)
-        if candidate.exists():
-            return candidate
+    """Uploads use the JSON export (stable field types, includes summary)."""
     return stem.with_suffix(".json")
 
 
